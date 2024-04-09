@@ -25,12 +25,6 @@ And then save the changes.
 You may not create the **server_options** file, then when you initialize the application **start()** in the **server.py** file, the application itself will create the server settings file.
 To change it, open the file as a text file, e.g. with the **nano** utility. By default, the application will create a socket and put it in listening mode at 127.0.0.1 on port 20001.
 
-It is **not recommended** to run the server as described below:
-
-    python server.py
-
-This may cause the process to hang and block the socket after attempting to terminate by typing the ctrl+Z command.
-
 After modification, do not forget to restart the server.
 
 #
