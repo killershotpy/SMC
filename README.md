@@ -29,6 +29,7 @@ After modification, do not forget to restart the server.
 
 #
 ###Service for *unix-systems
+
 If you are on a linux (unix-like) system, you will probably find it useful to create a service to automatically start **server.py** login point.
 Below are the basic settings for the service:
 
@@ -68,6 +69,7 @@ Since the **requirements.txt** dependency uses
 
 #
 ###Example using SMC
+
 Here is an example of sending a request from a client to an already running (deploined server):
 
     from client import get_connect, request
@@ -105,4 +107,5 @@ In this line, the following happens:
 
 #
 #End
+
 Great, you can start the server and handle client requests.
