@@ -8,6 +8,7 @@ from server_options import conf
 
 
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server_socket.settimeout(0.1)
 server_socket.bind((conf.loaded_config[conf.host], int(conf.loaded_config[conf.port])))
 server_socket.listen()
 
@@ -91,10 +92,13 @@ def handle_client(connection):
 def start():
     try:
         while True:
-            connection, address = server_socket.accept()
-            client_thread = Thread(target=handle_client, args=[connection])
-            client_connections[f'{address[0]}:{address[1]}'] = client_thread
-            client_thread.start()
+            try:
+                connection, address = server_socket.accept()
+                client_thread = Thread(target=handle_client, args=[connection])
+                client_connections[f'{address[0]}:{address[1]}'] = client_thread
+                client_thread.start()
+            except socket.timeout:
+                continue
     except KeyboardInterrupt:
         pass
     finally:

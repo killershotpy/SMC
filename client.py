@@ -32,10 +32,7 @@ def get_all_data(connection, n):
 
 def get_connect(host: str, port: int):
     connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    try:
-        connection.connect((host, port))
-    except (ConnectionResetError, ConnectionRefusedError):
-        raise ConnectionError('remote host reject connection')
+    connection.connect((host, port))
     return connection
 
 
@@ -46,14 +43,8 @@ def request(connection: socket, data: object) -> object:
     :param data: any object than can be serialized JSON standard
     :return: response server
     """
-    try:
-        send_msg(connection, data)
-    except ConnectionResetError:
-        return 'ConnectionResetError'
-    try:
-        return get_message(connection)
-    except ConnectionAbortedError:
-        return 'ConnectionResetError'
+    send_msg(connection, data)
+    return get_message(connection)
 
 
 Aes = encryptor.Aes()
