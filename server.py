@@ -1,5 +1,3 @@
-#!/usr/bin/env python3.9
-
 import socket
 
 from threading import Thread, enumerate
