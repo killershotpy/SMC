@@ -50,7 +50,10 @@ def request(connection: socket, data: object) -> object:
         send_msg(connection, data)
     except ConnectionResetError:
         return 'ConnectionResetError'
-    return get_message(connection)
+    try:
+        return get_message(connection)
+    except ConnectionAbortedError:
+        return 'ConnectionResetError'
 
 
 Aes = encryptor.Aes()

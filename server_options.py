@@ -8,6 +8,7 @@ class ParametersNames:
     name_thread_cleaner = 'cleaner'
     name_file_config = 'options_server'
     default_host_port = ['host = 127.0.0.1', 'port = 20001']
+    timeout = 'timeout'
     loaded_config = None
     try:
         loaded_config = {s.split()[0]: s.split()[2] if len(s.split()) == 3 else {} for s in open(name_file_config, 'r', encoding='utf-8').readlines()}
