@@ -8,7 +8,7 @@ from server_options import conf
 
 
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_socket.settimeout(1)
+server_socket.settimeout(0.1)
 server_socket.bind((conf.loaded_config[conf.host], int(conf.loaded_config[conf.port])))
 server_socket.listen()
 
