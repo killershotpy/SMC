@@ -9,7 +9,7 @@ from server_options import conf
 
 
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_socket.bind((conf.values[conf.host], int(conf.values[conf.port])))
+server_socket.bind((conf.loaded_config[conf.host], int(conf.loaded_config[conf.port])))
 server_socket.listen()
 
 client_connections = {}

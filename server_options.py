@@ -1,5 +1,3 @@
-
-
 class ParametersNames:
     """Parameters names"""
 
@@ -8,11 +6,14 @@ class ParametersNames:
     call_func = 'call_func'
     data = 'data'
     name_thread_cleaner = 'cleaner'
-
+    name_file_config = 'options_server'
+    default_host_port = ['host = 127.0.0.1', 'port = 20001']
+    loaded_config = None
     try:
-        values = {s.split()[0]: s.split()[2] if len(s.split()) == 3 else {} for s in open('options_server', 'r', encoding='utf-8').readlines()}
+        loaded_config = {s.split()[0]: s.split()[2] if len(s.split()) == 3 else {} for s in open(name_file_config, 'r', encoding='utf-8').readlines()}
     except FileNotFoundError:
-        raise FileNotFoundError('file \'options_server\' not found')
+        open(name_file_config, 'w', encoding='utf-8').write('\n'.join(default_host_port))
+        loaded_config = {s.split()[0]: s.split()[2] if len(s.split()) == 3 else {} for s in open(name_file_config, 'r', encoding='utf-8').readlines()}
 
     def __setattr__(self, *args, **kwargs): raise NotImplementedError('can\'t rewrite attributes')
     def __delete__(self, instance): raise NotImplementedError('it is not possible to delete this configuration class of an application')
