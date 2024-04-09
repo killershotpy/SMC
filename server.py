@@ -83,8 +83,6 @@ def handle_client(connection):
                     response(connection, 'call_func not found')
     except ConnectionResetError:
         pass
-    except socket.timeout:
-        pass
     finally:
         connection.close()
         cleaner_event.set()
@@ -93,14 +91,10 @@ def handle_client(connection):
 def start():
     try:
         while True:
-            try:
-                connection, address = server_socket.accept()
-                connection.settimeout(60)
-                client_thread = Thread(target=handle_client, args=[connection])
-                client_connections[f'{address[0]}:{address[1]}'] = client_thread
-                client_thread.start()
-            except socket.timeout:
-                continue
+            connection, address = server_socket.accept()
+            client_thread = Thread(target=handle_client, args=[connection])
+            client_connections[f'{address[0]}:{address[1]}'] = client_thread
+            client_thread.start()
     except KeyboardInterrupt:
         pass
     finally:
