@@ -1,7 +1,6 @@
 import socket
 
-from threading import Thread, enumerate
-from time import sleep
+from threading import Thread, enumerate, Event
 
 import encryptor
 import server_functions
@@ -9,16 +8,23 @@ from server_options import conf
 
 
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server_socket.settimeout(1)
 server_socket.bind((conf.loaded_config[conf.host], int(conf.loaded_config[conf.port])))
 server_socket.listen()
 
 client_connections = {}
+cleaner_event = Event()
+shutdown_event = Event()
 Aes = encryptor.Aes()
 
 
 def cleaner():
     dead_threads = []
     while True:
+        cleaner_event.wait()
+        if shutdown_event.is_set():
+            break
+        cleaner_event.clear()
         try:
             for thread_name, thread in client_connections.items():
                 if thread.is_alive() is False:
@@ -29,7 +35,6 @@ def cleaner():
         if len(dead_threads) > 0:
             [client_connections.__delitem__(thread_name) for thread_name in dead_threads]
             dead_threads.clear()
-        sleep(0.05)
 
 
 # start thread cleaner
@@ -65,6 +70,7 @@ def get_all_data(connection, n):
 
 
 def handle_client(connection):
+    connection.settimeout(60)
     try:
         while True:
             client_request = get_message(connection)
@@ -81,18 +87,24 @@ def handle_client(connection):
         pass
     finally:
         connection.close()
+        cleaner_event.set()
 
 
 def start():
     try:
         while True:
-            connection, address = server_socket.accept()
-            client_thread = Thread(target=handle_client, args=[connection])
-            client_connections[f'{address[0]}:{address[1]}'] = client_thread
-            client_thread.start()
+            try:
+                connection, address = server_socket.accept()
+                client_thread = Thread(target=handle_client, args=[connection])
+                client_connections[f'{address[0]}:{address[1]}'] = client_thread
+                client_thread.start()
+            except socket.timeout:
+                continue
     except KeyboardInterrupt:
         pass
     finally:
+        shutdown_event.set()
+        cleaner_event.set()
         [thread.join() for thread in client_connections.values() if thread.is_alive()]
         [thread.join() for thread in enumerate() if thread.name == conf.name_thread_cleaner and thread.is_alive() is True]
         server_socket.close()
