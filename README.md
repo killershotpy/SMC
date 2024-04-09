@@ -66,6 +66,7 @@ This assumes that you are using python **version 3.9**.
 Since the **requirements.txt** dependency uses 
 **cryptography**-module to securely encrypt/decrypt traffic between client and server, you need to use **python version >= 3.9.10**.
 
+#
 ###Example using SMC
 Here is an example of sending a request from a client to an already running (deploined server):
 
@@ -102,5 +103,6 @@ In this line, the following happens:
         # get names functions and links to functions for import
         names = {name: obj for name, obj in frame().f_locals.items() if callable(obj) and obj.__module__ == __name__}
 
+#
 #End
 Great, you can start the server and handle client requests.
