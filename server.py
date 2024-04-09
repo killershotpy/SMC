@@ -83,15 +83,20 @@ def handle_client(connection):
         connection.close()
 
 
-try:
-    while True:
-        connection, address = server_socket.accept()
-        client_thread = Thread(target=handle_client, args=[connection])
-        client_connections[f'{address[0]}:{address[1]}'] = client_thread
-        client_thread.start()
-except KeyboardInterrupt:
-    pass
-finally:
-    [thread.join() for thread in client_connections.values() if thread.is_alive()]
-    [thread.join() for thread in enumerate() if thread.name == conf.name_thread_cleaner and thread.is_alive() is True]
-    server_socket.close()
+def start():
+    try:
+        while True:
+            connection, address = server_socket.accept()
+            client_thread = Thread(target=handle_client, args=[connection])
+            client_connections[f'{address[0]}:{address[1]}'] = client_thread
+            client_thread.start()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        [thread.join() for thread in client_connections.values() if thread.is_alive()]
+        [thread.join() for thread in enumerate() if thread.name == conf.name_thread_cleaner and thread.is_alive() is True]
+        server_socket.close()
+
+
+if __name__ == '__main__':
+    start()
