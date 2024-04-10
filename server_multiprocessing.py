@@ -4,7 +4,7 @@ import multiprocessing
 from threading import Thread, enumerate, Event
 
 import server_functions
-from encryptor import Aes as Aes
+from encryptor import Aes
 from server_options import conf
 
 
