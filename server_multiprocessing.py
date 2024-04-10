@@ -1,4 +1,5 @@
 import socket
+import multiprocessing
 
 from threading import Thread, enumerate, Event
 
@@ -7,17 +8,23 @@ from encryptor import Aes as Aes
 from server_options import conf
 
 
-server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_socket.settimeout(0.1)
-server_socket.bind((conf.loaded_config[conf.host], int(conf.loaded_config[conf.port])))
-server_socket.listen()
-
-client_connections = {}
-cleaner_event = Event()
-shutdown_event = Event()
+global_shutdown_event = multiprocessing.Event()
 
 
-def cleaner():
+def start():
+    processes = []
+    try:
+        for port in conf.multiproc_ports_list:
+            process = multiprocessing.Process(target=start_process, args=(port, global_shutdown_event))
+            processes.append(process)
+            process.start()
+        for process in processes:
+            process.join()
+    except KeyboardInterrupt:
+        global_shutdown_event.set()
+
+
+def cleaner(client_connections: dict, cleaner_event: Event, shutdown_event: Event):
     dead_threads = []
     while True:
         cleaner_event.wait()
@@ -34,10 +41,6 @@ def cleaner():
         if len(dead_threads) > 0:
             [client_connections.__delitem__(thread_name) for thread_name in dead_threads]
             dead_threads.clear()
-
-
-# start thread cleaner
-Thread(name=conf.name_thread_cleaner, target=cleaner).start()
 
 
 def response(connection, msg):
@@ -68,7 +71,7 @@ def get_all_data(connection, n):
     return Aes.decrypt(b''.join(data))
 
 
-def handle_client(connection):
+def handle_client(connection, cleaner_event):
     try:
         while True:
             client_request = get_message(connection)
@@ -88,12 +91,22 @@ def handle_client(connection):
         cleaner_event.set()
 
 
-def start():
+def start_process(port: int, glob_shutdown_event: multiprocessing.Event):
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.settimeout(0.1)
+    server_socket.bind((conf.loaded_config[conf.host], port))
+    server_socket.listen()
+
+    client_connections = {}
+    cleaner_event = Event()
+    shutdown_event = Event()
+
+    Thread(name=conf.name_thread_cleaner, target=cleaner, args=[client_connections, cleaner_event, shutdown_event]).start()
     try:
-        while True:
+        while not glob_shutdown_event.is_set():
             try:
                 connection, address = server_socket.accept()
-                client_thread = Thread(target=handle_client, args=[connection])
+                client_thread = Thread(target=handle_client, args=[connection, cleaner_event])
                 client_connections[f'{address[0]}:{address[1]}'] = client_thread
                 client_thread.start()
             except socket.timeout:

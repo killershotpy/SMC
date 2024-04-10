@@ -68,3 +68,6 @@ def load_app_key(path_key: str = 'key'):
     except FileNotFoundError:
         generate_app_key(path_key=path_key)
         return open(path_key, 'rb').read()
+
+
+Aes = Aes()

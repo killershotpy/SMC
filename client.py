@@ -1,5 +1,6 @@
 import socket
-import encryptor
+
+from encryptor import Aes
 
 
 def send_msg(connection, msg):
@@ -45,6 +46,3 @@ def request(connection: socket, data: object) -> object:
     """
     send_msg(connection, data)
     return get_message(connection)
-
-
-Aes = encryptor.Aes()
