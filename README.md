@@ -1,4 +1,4 @@
-#SMC
+# SMC
 
 It's - easy **server-machine-communication**.
 
@@ -17,7 +17,7 @@ Remember that the client only sends requests, but in any other case, if you add 
 
 Also before starting the server, you need to create a configuration file "options_server", in which you must be sure to put the following parameters:
 
-    host = 127.0.0.1
+    host = "127.0.0.1"
     port = 20001
 
 And then save the changes.
@@ -25,10 +25,13 @@ And then save the changes.
 You may not create the **server_options** file, then when you initialize the application **start()** in the **server.py** file, the application itself will create the server settings file.
 To change it, open the file as a text file, e.g. with the **nano** utility. By default, the application will create a socket and put it in listening mode at 127.0.0.1 on port 20001.
 
+Note that the parameters are serialized so that the number **value = 10** is interpreted on load as **value: int = 10** in the configuration file.
+Therefore, single quotes and other characters that cannot be serialized are **strictly inadmissible**!
+
 After modification, do not forget to restart the server.
 
-#
-###Service for *unix-systems
+# 
+### Service for *unix-systems
 
 If you are on a linux (unix-like) system, you will probably find it useful to create a service to automatically start **server.py** login point.
 Below are the basic settings for the service:
@@ -67,8 +70,8 @@ This assumes that you are using python **version 3.9**.
 Since the **requirements.txt** dependency uses 
 **cryptography**-module to securely encrypt/decrypt traffic between client and server, you need to use **python version >= 3.9.10**.
 
-#
-###Example using SMC
+# 
+### Example using SMC
 
 Here is an example of sending a request from a client to an already running (deploined server):
 
@@ -105,7 +108,7 @@ In this line, the following happens:
         # get names functions and links to functions for import
         names = {name: obj for name, obj in frame().f_locals.items() if callable(obj) and obj.__module__ == __name__}
 
-#
-#End
+# 
+# End
 
 Great, you can start the server and handle client requests.
