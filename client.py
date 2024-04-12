@@ -1,16 +1,16 @@
 import socket
 
-from encryptor import Aes
+from encryptor import Aes_v
 
 
 def send_msg(connection, msg):
-    msg = Aes.encrypt(msg)
-    msg_len_str = Aes.encrypt(f"{len(msg):04d}")
+    msg = Aes_v.encrypt(msg)
+    msg_len_str = Aes_v.encrypt(f"{len(msg):04d}")
     connection.sendall(msg_len_str + msg)
 
 
 def get_message(connection):
-    get_len_message = get_all_data(connection, Aes.first_bytes_for_socket)
+    get_len_message = get_all_data(connection, Aes_v.first_bytes_for_socket)
     if not get_len_message:
         return 'ConnectionResetError'
     return get_all_data(connection, int(get_len_message))
@@ -28,7 +28,7 @@ def get_all_data(connection, n):
             return None
         data.append(packet)
         total_received += len(packet)
-    return Aes.decrypt(b''.join(data))
+    return Aes_v.decrypt(b''.join(data))
 
 
 def get_connect(host: str, port: int):

@@ -3,7 +3,7 @@ import socket
 from threading import Thread, enumerate, Event
 
 import server_functions
-from encryptor import Aes as Aes
+from encryptor import Aes_v
 from server_options import conf
 
 
@@ -41,14 +41,14 @@ Thread(name=conf.name_thread_cleaner, target=cleaner).start()
 
 
 def response(connection, msg):
-    msg = Aes.encrypt(msg)
-    msg_len_str = Aes.encrypt(f"{len(msg):04d}")
+    msg = Aes_v.encrypt(msg)
+    msg_len_str = Aes_v.encrypt(f"{len(msg):04d}")
     connection.sendall(msg_len_str + msg)
 
 
 def get_message(connection):
     try:
-        get_len_message = get_all_data(connection, Aes.first_bytes_for_socket)
+        get_len_message = get_all_data(connection, Aes_v.first_bytes_for_socket)
     except UnicodeDecodeError:
         return
     if not get_len_message:
@@ -65,7 +65,7 @@ def get_all_data(connection, n):
             return None
         data.append(packet)
         total_received += len(packet)
-    return Aes.decrypt(b''.join(data))
+    return Aes_v.decrypt(b''.join(data))
 
 
 def handle_client(connection):

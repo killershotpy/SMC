@@ -70,4 +70,4 @@ def load_app_key(path_key: str = 'key'):
         return open(path_key, 'rb').read()
 
 
-Aes = Aes()
+Aes_v = Aes()
