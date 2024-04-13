@@ -23,7 +23,6 @@ class Aes:
         :param obj: Any object, that it's can serialized JSON standard.
         :return: Bytes string encrypt by algorithm AES_256, [obj: bytes].
         """
-
         enc = Cipher(algorithms.AES(self.e_key), modes.OFB(self.e_key[:self.offset_compression]), default_backend()).encryptor()
         return self.e_key[:self.offset_compression] + enc.update(self.pad(dm(obj)).encode('utf-8')) + enc.finalize()
 

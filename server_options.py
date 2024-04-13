@@ -26,7 +26,7 @@ class ParametersNames:
     name_thread_cleaner = 'cleaner'
     timeout = 'timeout'
     loaded_config = loaded_config
-    multiproc_ports_list = [loaded_config['port'] + x for x in range(os.cpu_count() * 2)]
+    multiproc_ports_list = [loaded_config['port'] + x for x in range(os.cpu_count())]
 
     def __setattr__(self, *args, **kwargs): raise NotImplementedError('can\'t rewrite attributes')
     def __delete__(self, instance): raise NotImplementedError('it is not possible to delete this configuration class of an application')
