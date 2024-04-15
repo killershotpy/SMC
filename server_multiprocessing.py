@@ -1,6 +1,7 @@
 import multiprocessing
 import socket
 
+from typing import Any as Any
 from threading import Thread, enumerate, Event
 
 import server_functions
@@ -12,7 +13,7 @@ global_shutdown_event = multiprocessing.Event()
 manager = multiprocessing.Manager
 
 
-def start():
+def start() -> None:
     connections_at_ports = manager().dict()
     processes = []
     try:
@@ -31,7 +32,7 @@ def cleaner(client_connections: dict,
             cleaner_event: Event,
             shutdown_event: Event,
             port: int,
-            connections_at_ports: dict):
+            connections_at_ports: dict) -> None:
     dead_threads = []
     while True:
         cleaner_event.wait()
@@ -51,13 +52,13 @@ def cleaner(client_connections: dict,
             connections_at_ports[port] -= 1
 
 
-def response(connection: socket.socket, msg: object):
+def response(connection: socket.socket, msg: Any) -> None:
     msg = Aes_v.encrypt(msg)
     msg_len_str = Aes_v.encrypt(f"{len(msg):04d}")
     connection.sendall(msg_len_str + msg)
 
 
-def get_message(connection: socket.socket):
+def get_message(connection: socket.socket) -> Any:
     try:
         get_len_message = get_all_data(connection, Aes_v.first_bytes_for_socket)
     except UnicodeDecodeError:
@@ -67,7 +68,7 @@ def get_message(connection: socket.socket):
     return get_all_data(connection, int(get_len_message))
 
 
-def get_all_data(connection: socket.socket, n: int):
+def get_all_data(connection: socket.socket, n: int) -> Any:
     data = []
     total_received = 0
     while total_received < n:
@@ -81,8 +82,7 @@ def get_all_data(connection: socket.socket, n: int):
 
 def handle_client(connection: socket.socket,
                   cleaner_event: Event,
-                  connections_at_ports: dict,
-                  is_hello: bool = None):
+                  connections_at_ports: dict) -> None:
     try:
         while True:
             client_request = get_message(connection)
@@ -107,7 +107,7 @@ def handle_client(connection: socket.socket,
 
 def start_process(port: int,
                   glob_shutdown_event: multiprocessing.Event,
-                  connections_at_ports: dict):
+                  connections_at_ports: dict) -> None:
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.settimeout(0.1)
     server_socket.bind((conf.loaded_config[conf.host], port))

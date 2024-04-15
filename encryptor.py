@@ -41,7 +41,7 @@ class Aes:
         return s + padding * chr(padding)
 
 
-def generate_app_key(length: int = 256, path_key: str = 'key'):
+def generate_app_key(length: int = 256, path_key: str = 'key') -> None:
     """Generate bytes by os.urandom() (default 256) and save on (this) work directory.
 
     key - is name file because saved.
@@ -54,13 +54,11 @@ def generate_app_key(length: int = 256, path_key: str = 'key'):
         open(path_key, 'wb').write(ur(length))
 
 
-def load_app_key(path_key: str = 'key'):
-    """Load secret key app.
-
-    Return object type bytes.
+def load_app_key(path_key: str = 'key') -> bytes:
+    """Load secret key app. Return object type bytes.
 
     :param path_key: absolute path to secret key app
-    :return: byte string
+    :return: bytes urandom
     """
     try:
         return open(path_key, 'rb').read()

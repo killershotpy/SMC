@@ -14,7 +14,7 @@ Also, for convenience, make changes directly to the file **server_functions.py**
 
 Remember that the client only sends requests, but in any other case, if you add some code, the client can process the server's responses.
 
-Also before starting the server, you need to create a configuration file "options_server", in which you must be sure to put the following parameters:
+Also before starting the server, you need to create a configuration file "**options_server**", in which you must be sure to put the following parameters:
 
     host = "127.0.0.1"
     port = 20001

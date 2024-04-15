@@ -1,5 +1,6 @@
 import socket
 
+from typing import Any as Any
 from threading import Thread, enumerate, Event
 
 import server_functions
@@ -17,7 +18,7 @@ cleaner_event = Event()
 shutdown_event = Event()
 
 
-def cleaner():
+def cleaner() -> None:
     dead_threads = []
     while True:
         cleaner_event.wait()
@@ -40,13 +41,13 @@ def cleaner():
 Thread(name=conf.name_thread_cleaner, target=cleaner).start()
 
 
-def response(connection, msg):
+def response(connection: socket.socket, msg: Any) -> None:
     msg = Aes_v.encrypt(msg)
     msg_len_str = Aes_v.encrypt(f"{len(msg):04d}")
     connection.sendall(msg_len_str + msg)
 
 
-def get_message(connection):
+def get_message(connection: socket.socket) -> Any:
     try:
         get_len_message = get_all_data(connection, Aes_v.first_bytes_for_socket)
     except UnicodeDecodeError:
@@ -56,7 +57,7 @@ def get_message(connection):
     return get_all_data(connection, int(get_len_message))
 
 
-def get_all_data(connection, n):
+def get_all_data(connection: socket.socket, n: int) -> Any:
     data = []
     total_received = 0
     while total_received < n:
@@ -68,7 +69,7 @@ def get_all_data(connection, n):
     return Aes_v.decrypt(b''.join(data))
 
 
-def handle_client(connection):
+def handle_client(connection: socket.socket) -> None:
     try:
         while True:
             client_request = get_message(connection)
@@ -88,7 +89,7 @@ def handle_client(connection):
         cleaner_event.set()
 
 
-def start():
+def start() -> None:
     try:
         while True:
             try:
