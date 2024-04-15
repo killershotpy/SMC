@@ -2,6 +2,9 @@
 
 cd ..
 git clone https://github.com/killershotpy/SMC.git
+cd /SMC
+pip install requirements.txt
+
 
 cat <<EOF > /etc/systemd/system/SMC.service
 [Unit]

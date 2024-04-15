@@ -1,5 +1,4 @@
 # SMC
-
 It's - easy **server-machine-communication**.
 
 SMC - is built solely on mutual trust of sources, therefore all data transmitted through tcp-channel are encrypted with **AES-256** algorithm, without a true "**key**" file, which is generated automatically at the first start of the server, all clients that connect to the socket and try to send any data to it - will not be able to cause any harm to your machine.
@@ -30,8 +29,8 @@ Therefore, single quotes and other characters that cannot be serialized are **st
 
 After modification, do not forget to restart the server.
 
-# 
-### Service for *unix-systems
+##
+### Service's for *unix-systems
 
 If you are on a linux (unix-like) system, you will probably find it useful to create a service to automatically start **server.py** login point.
 Below are the basic settings for the service:
@@ -69,8 +68,19 @@ This assumes that you are using python **version 3.9**.
 
 Since the **requirements.txt** dependency uses 
 **cryptography**-module to securely encrypt/decrypt traffic between client and server, you need to use **python version >= 3.9.10**.
+###
+But for your convenience, 3 scripts have been created to customize the services:
+1. **clear_cache.sh** - configures automatic clearing of cached memory, so called "buff/cache" memory, this is useful for resetting cached memory and freeing up system RAM
+2. **configurate_SMC.sh** - copies the repository, installs **requirements.txt**, creates the systemd service file, writes the contents of the service with settings into it, enables autorun of the service after rebooting the machine, reboots the systemd daemon, starts the socket server service
+3. **configurate_ufw.sh** - creates an application file in the **ufw** utility directory, enables the firewall, reboots it, and removes the automatically created "allow" rule for IPv6 addresses, since they will not be needed.
 
-# 
+To run the scripts, write in the console:
+
+      bash NAME_SCRIPT.sh
+
+Run the scripts in order: 2, 3, 1 (numbers above).
+
+## 
 ### Example using SMC
 
 Here is an example of sending a request from a client to an already running (deploined server):
@@ -101,14 +111,12 @@ In this line, the following happens:
 1. the function of sending a response by the server accepts 2 arguments, where 1 argument is the connection object, the 2nd argument is the received function name from the variable "**names**".
 2. receives the name of the function specified in the request "**client_request[conf.call_func]**".
 3. calls the received function, if it exists in **server_functions.py** passing the request body from the client request from the "**data**" field.
-- If you specify the function name incorrectly and it is not found, the server will return the response "**call_func not found**".
-- If you don't specify the "**data**" field in the request to the server, nothing happens, you just call the function by name, which processes some data and returns it to the client.
+   - If you specify the function name incorrectly and it is not found, the server will return the response "**call_func not found**".
+   - If you don't specify the "**data**" field in the request to the server, nothing happens, you just call the function by name, which processes some data and returns it to the client.
 4. "**server_functions.names**" is a global visibility variable in **server_functions.py** that collects the names of custom functions that were written in **server_functions.py**, the construct forming the dictionary object **{'name function': your_function, ...}** looks like this:
 
         # get names functions and links to functions for import
         names = {name: obj for name, obj in frame().f_locals.items() if callable(obj) and obj.__module__ == __name__}
 
-# 
 # End
-
 Great, you can start the server and handle client requests.
