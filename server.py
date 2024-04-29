@@ -77,11 +77,15 @@ def handle_client(connection: socket.socket) -> None:
                 break
             else:
                 try:
-                    response(connection, server_functions.names.get(client_request[conf.call_func])(client_request.get(conf.data)))
+                    data = client_request.get(conf.data)
+                    if data is not None:
+                        response(connection, server_functions.names.get(client_request[conf.call_func])(client_request.get(conf.data)))
+                    else:
+                        response(connection, server_functions.names.get(client_request[conf.call_func])())
                 except TypeError:
-                    response(connection, 'incorrect data')
+                    response(connection, 'callable function say: \'incorrect data\'')
                 except KeyError:
-                    response(connection, 'call_func not found')
+                    response(connection, '\'call_func\' field not found')
     except ConnectionResetError:
         pass
     finally:
